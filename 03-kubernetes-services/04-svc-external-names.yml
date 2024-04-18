@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: training-aurora-svc
+  #namespace: test
+spec:
+  type: ExternalName
+  externalName: your-aurora-cluster.cluster-identifier.region.rds.amazonaws.com
