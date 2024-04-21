@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: print-date-time
+spec:
+  template:
+    spec:
+      containers:
+        - name: print-date-time
+          image: python:3.9-slim
+          command: ["python", "-c", "import datetime; print(datetime.datetime.now())"]
+      restartPolicy: OnFailure
