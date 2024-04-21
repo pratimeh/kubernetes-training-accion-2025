@@ -1,1 +1,3 @@
 /.idea/
+/04-kubernetes-controllers/06-cronJobs/Scale-down/
+/04-kubernetes-controllers/06-cronJobs/Scale-up/
