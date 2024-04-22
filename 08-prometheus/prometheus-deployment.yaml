@@ -35,4 +35,4 @@ spec:
             name: prometheus-server-conf
         - name: prometheus-storage-volume
           persistentVolumeClaim:
-            claimName: pvc-promtheus
+            claimName: pvc-prometheus
