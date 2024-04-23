@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1 # as an absolute number of replicas
+      maxUnavailable: 33% # as % of replicas
+    type: RollingUpdate
+  minReadySeconds: 5 # Using minReadySeconds to add a readiness buffer.
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25.3 # Versioning: Using a specific version tag.
+        ports:
+        - containerPort: 80
+        readinessProbe: # Incorporating probes.
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          failureThreshold: 2
+        # NOTE: The default Nginx container does not include a "/health" endpoint.
+        # Adjust the path below to point to a valid health check endpoint in your application.
+        livenessProbe:
+          httpGet:
+            path: / # Default path; adjust as necessary for your application's health check.
+            port: 80
+          initialDelaySeconds: 15
+          failureThreshold: 2
+          periodSeconds: 45
