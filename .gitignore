@@ -1,3 +1,8 @@
 /.idea/
-/04-kubernetes-controllers/06-cronJobs/Scale-down/
-/04-kubernetes-controllers/06-cronJobs/Scale-up/
+/03-kubernetes-controllers/06-cronJobs/Scale-down/
+/03-kubernetes-controllers/06-cronJobs/Scale-up/
+/certified-kubernetes-administrator-course/
+/kubernetes-administrator-certification/
+/ngx-admin/
+/Quizzes/
+/spring-petclinic/

@@ -1,0 +1,39 @@
+### TODO - Make this work
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up-job
+spec:
+  schedule: "0 6 * * 1-5"  # Schedule to run at 9AM (UTC) from Monday to Friday
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scale-up-container
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  kubectl scale --replicas=10 deployment/ngx-admin-deployment
+          restartPolicy: OnFailure
+  startingDeadlineSeconds: 3600  # Wait up to 1 hour for the CronJob to be run
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-down-job
+spec:
+  schedule: "0 17 * * 1-5"  # Schedule to run at 5PM (UTC) from Monday to Friday
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scale-down-container
+              image: bitnami/kubectl:latest
+              command: ["kubectl", "scale", "--replicas=2", "deployment/ngx-admin-deployment"]
+          restartPolicy: OnFailure
+  startingDeadlineSeconds: 3600  # Wait up to 1 hour for the CronJob to be run
