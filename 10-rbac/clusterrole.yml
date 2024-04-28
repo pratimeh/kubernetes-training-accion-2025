@@ -4,5 +4,5 @@ metadata:
   name: ns-admin
 rules:
 - apiGroups: [""] # "" indicates the core API group
-  resources: ["pods", "namespaces"]
+  resources: ["namespaces"]
   verbs: ["get", "watch", "list", "create"]
