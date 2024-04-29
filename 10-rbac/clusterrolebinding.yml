@@ -4,7 +4,7 @@ metadata:
   name: nsadmin
 subjects:
 - kind: User
-  name: user1 # Name is case sensitive
+  name: user2 # Name is case sensitive
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole #this must be Role or ClusterRole
