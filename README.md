@@ -190,7 +190,7 @@ Ensure all nodes are in `Ready` state and CNI pods are running.
 
 ---
 
-## 🔻 Teardown / Delete Kubernetes Network Infrastructure on GCP
+## 🔻 Delete Kubernetes Network Infrastructure on GCP
 
 ### STEP 1. Delete Compute Instances
 
@@ -235,7 +235,7 @@ gcloud cocmpute networks subnets delete k8s-subnet \
   --quiet
 ```
 
-> ⚠️ Make sure no VMs or routers are using this subnet before deleting.
+
 
 #### 4️⃣ Delete VPC Network
 
@@ -243,6 +243,6 @@ gcloud cocmpute networks subnets delete k8s-subnet \
 gcloud compute networks delete k8s-vpc --quiet
 ```
 
-> ⚠️ Ensure the subnet and router are deleted first. The VPC must not be in use.
 
-how can upload this in git hub
+
+
