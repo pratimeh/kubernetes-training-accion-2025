@@ -72,25 +72,146 @@ for i in 1 2; do
   done
 ```
 
-#### 2. Create 2 worker nodes
+#### 2. Create 1 worker nodes
 
 ```bash
-for i in 1 2; do
-  gcloud compute instances create worker-${i} \
+  gcloud compute instances create worker-1} \
     --zone=us-central1-a \
     --machine-type=e2-medium \
     --subnet=k8s-subnet \
-    --private-network-ip=10.240.0.2${i} \
+    --private-network-ip=10.240.0.21 \
     --image-family=ubuntu-2204-lts \
     --image-project=ubuntu-os-cloud \
     --boot-disk-size=50GB \
     --tags=kubernetes \
     --can-ip-forward \
     --scopes=https://www.googleapis.com/auth/cloud-platform
-  done
 ```
 
 ---
+
+# 🧩 Kubernetes HA Setup with NGINX TCP Load Balancer
+
+
+
+## 🔹 Step 2: Install NGINX with Stream (TCP) Support
+
+
+
+SSH into the **NGINX Load Balancer VM** and install NGINX:
+
+
+
+```
+
+sudo apt update
+
+sudo apt install -y nginx
+
+Enable TCP stream module by editing the NGINX configuration:
+
+sudo nano /etc/nginx/nginx.conf
+
+Add the following block outside the http {} section, usually at the top:
+
+
+
+nginx
+
+Copy
+
+Edit
+
+stream {
+
+    upstream kube_masters {
+
+        server 10.240.0.11:6443;  # master-1
+
+        server 10.240.0.12:6443;  # master-2
+
+    }
+
+
+
+    server {
+
+        listen 6443;
+
+        proxy_pass kube_masters;
+
+    }
+
+}
+
+Save and restart NGINX:
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+🔹 Step 3: Open Port 6443 on NGINX VM
+
+Create a firewall rule to allow external access to the Kubernetes API via NGINX:
+
+gcloud compute firewall-rules create nginx-lb-k8s-api \
+
+  --network=k8s-vpc \
+
+  --allow tcp:6443 \
+
+  --target-tags=nginx-lb \
+
+  --source-ranges=0.0.0.0/0
+
+🔹 Step 4: Use NGINX IP in kubeadm
+
+Get the internal IP of your NGINX Load Balancer:
+
+gcloud compute instances describe nginx-lb \
+
+  --zone=us-central1-a \
+
+  --format="get(networkInterfaces[0].networkIP)"
+
+Use this IP (e.g. 10.240.0.100) as the --control-plane-endpoint when initializing the first master:
+
+kubeadm init \
+
+  --control-plane-endpoint "10.240.0.100:6443" \
+
+  --upload-certs \
+
+  --pod-network-cidr=10.244.0.0/16
+
+✅ Make sure 10.240.0.100 is the internal IP of the NGINX VM.
+
+
+
+🔹 Step 5: Join Additional Masters and Workers
+
+All kubeadm join commands for the second master and all worker nodes should also point to the NGINX IP as the --control-plane-endpoint.
+
+
+
+✅ Validation
+
+On any node, validate the connection to the Kubernetes API via NGINX:
+
+curl -k https://10.240.0.100:6443
+
+kubectl get nodes
+
+ or
+
+Kill One Master and Retest
+SSH into a master node (e.g. master-1) and stop the kube-apiserver:
+
+sudo systemctl stop kubelet
+Retest the API again via load balancer:
+
+curl -k https://<NGINX_LB_IP>:6443/version
+✅ If the output still returns successfully, your NGINX is correctly failing over to the second master.
 
 ### STEP 3: NODE PREPARATION (BOTH MASTER & WORKER)
 
