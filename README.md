@@ -1,6 +1,6 @@
 ## 🧩 PREPARATION ON GCP — Infrastructure Provisioning
 
-### STEP 1: Create VPC, Subnet, IG, FW Rules
+## 🔹 Step 1: Create VPC, Subnet, IG, FW Rules
 
 #### 1. Create a VPC
 
@@ -52,7 +52,7 @@ gcloud compute firewall-rules create k8s-fw-k8s-api \
 
 ---
 
-### STEP 2: Create the VMs (Ubuntu 22.04)
+## 🔹 Step 2: Create the VMs (Ubuntu 22.04)
 
 #### 1. Create 2 master nodes
 
@@ -107,7 +107,7 @@ gcloud compute instances create nginx-lb \
 
 ---
 
-## 🔹 Step 2: Install NGINX with Stream (TCP) Support
+## 🔹 Step 3: Install NGINX with Stream (TCP) Support
 
 SSH into the **NGINX Load Balancer VM** and install NGINX:
 
@@ -147,7 +147,7 @@ sudo systemctl restart nginx
 
 ---
 
-## 🔹 Step 3: Open Port 6443 on NGINX VM
+Open Port 6443 on NGINX VM
 
 Create a firewall rule to allow external access to the Kubernetes API via NGINX:
 
@@ -157,7 +157,7 @@ gcloud compute firewall-rules create nginx-lb-k8s-api   --network=k8s-vpc   --al
 
 ---
 
-## 🔹 Step 4: Use NGINX IP in kubeadm
+Use NGINX IP in kubeadm
 
 Get the **internal IP** of your NGINX Load Balancer:
 
@@ -175,7 +175,7 @@ kubeadm init   --control-plane-endpoint "10.240.0.100:6443"   --upload-certs   -
 
 ---
 
-## 🔹 Step 5: Join Additional Masters and Workers
+Join Additional Masters and Workers
 
 All `kubeadm join` commands for the second master and all worker nodes should also point to the **NGINX IP** as the `--control-plane-endpoint`.
 
@@ -203,7 +203,7 @@ Retest the API again via load balancer:
 curl -k https://<NGINX_LB_IP>:6443/version
 ```
 ✅ If the output still returns successfully, your NGINX is correctly failing over to the second master.
-### STEP 3: NODE PREPARATION (BOTH MASTER & WORKER)
+## 🔹 Step 4: NODE PREPARATION (BOTH MASTER & WORKER)
 
 SSH into each node and execute:
 
@@ -263,7 +263,7 @@ sudo apt-mark hold kubeadm kubelet kubectl
 
 ---
 
-### STEP 4: MASTER-1 INITIALIZATION
+## 🔹 Step 5: MASTER-1 INITIALIZATION
 
 ```bash
 sudo kubeadm init \
@@ -278,7 +278,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ---
 
-### STEP 5: Install Pod Network (Calico)
+## 🔹 Step 6: Install Pod Network (Calico)
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/calico.yaml
@@ -290,7 +290,7 @@ Use the join command provided by master-1 on both worker nodes.
 
 ---
 
-### STEP 6: VALIDATE
+## 🔹 Step 7: VALIDATE
 
 ```bash
 kubectl get nodes
@@ -303,19 +303,18 @@ Ensure all nodes are in `Ready` state and CNI pods are running.
 
 ## 🔻 Delete Kubernetes Network Infrastructure on GCP
 
-### STEP 1. Delete Compute Instances
+## 🔹 Step 1: Delete Compute Instances
 
 ```bash
 for i in 1 2; do
   gcloud compute instances delete master-${i} --zone=us-central1-a --quiet
 done
 
-for i in 1 2; do
-  gcloud compute instances delete worker-${i} --zone=us-central1-a --quiet
-done
+  gcloud compute instances delete worker-1 --zone=us-central1-a --quiet
+  gcloud compute instances delete nginx-lb --zone=us-central1-a --quiet
 ```
 
-### ✅ STEP 2. Delete VPC, Firewall, NAT, Subnet and Networks
+## 🔹 Step 2:. Delete VPC, Firewall, NAT, Subnet and Networks
 
 #### 1️⃣ Delete Firewall Rules
 
@@ -325,7 +324,7 @@ gcloud compute firewall-rules delete k8s-fw-ssh --quiet
 gcloud compute firewall-rules delete k8s-fw-k8s-api --quiet
 ```
 
-#### 2️⃣ Delete Cloud NAT and Router
+## 🔹 Step 3: Delete Cloud NAT and Router
 
 ```bash
 gcloud compute routers nats delete k8s-nat \
@@ -338,7 +337,7 @@ gcloud compute routers delete k8s-router \
   --quiet
 ```
 
-#### 3️⃣ Delete Subnet
+## 🔹 Step 4: Delete Subnet
 
 ```bash
 gcloud cocmpute networks subnets delete k8s-subnet \
@@ -348,7 +347,7 @@ gcloud cocmpute networks subnets delete k8s-subnet \
 
 
 
-#### 4️⃣ Delete VPC Network
+## 🔹 Step 5: Delete VPC Network
 
 ```bash
 gcloud compute networks delete k8s-vpc --quiet
