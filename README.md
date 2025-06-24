@@ -75,11 +75,11 @@ for i in 1 2; do
 #### 2. Create 1 worker node
 
 ```bash
-  gcloud compute instances create worker-1} \
+  gcloud compute instances create worker-1 \
     --zone=us-central1-a \
     --machine-type=e2-medium \
     --subnet=k8s-subnet \
-    --private-network-ip=10.240.0.21 \
+    --private-network-ip=10.240.0.13 \
     --image-family=ubuntu-2204-lts \
     --image-project=ubuntu-os-cloud \
     --boot-disk-size=50GB \
@@ -96,7 +96,7 @@ gcloud compute instances create nginx-lb \
     --zone=us-central1-a \
     --machine-type=e2-medium \
     --subnet=k8s-subnet \
-    --private-network-ip=10.240.0.3 \
+    --private-network-ip=10.240.0.14 \
     --image-family=ubuntu-2204-lts \
     --image-project=ubuntu-os-cloud \
     --boot-disk-size=50GB \
@@ -165,13 +165,13 @@ Get the **internal IP** of your NGINX Load Balancer:
 gcloud compute instances describe nginx-lb   --zone=us-central1-a   --format="get(networkInterfaces[0].networkIP)"
 ```
 
-Use this IP (e.g. `10.240.0.100`) as the `--control-plane-endpoint` when initializing the first master:
+Use this IP (e.g. `10.240.0.14`) as the `--control-plane-endpoint` when initializing the first master:
 
 ```bash
-kubeadm init   --control-plane-endpoint "10.240.0.100:6443"   --upload-certs   --pod-network-cidr=10.244.0.0/16
+kubeadm init   --control-plane-endpoint "10.240.0.14:6443"   --upload-certs   --pod-network-cidr=10.244.0.0/16
 ```
 
- **Make sure `10.240.0.100` is the internal IP of the NGINX VM.**
+ **Make sure `10.240.0.14` is the internal IP of the NGINX VM.**
 
 ---
 
