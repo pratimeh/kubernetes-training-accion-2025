@@ -263,7 +263,7 @@ sudo apt-mark hold kubeadm kubelet kubectl
 
 ---
 
-## 🔹 Step 5: MASTER-1 INITIALIZATION
+## Step 5: MASTER-1 INITIALIZATION
 
 ```bash
 sudo kubeadm init \
