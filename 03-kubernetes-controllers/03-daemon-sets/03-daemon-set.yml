@@ -18,7 +18,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "<html><body><h1>DaemonSet on pod: $(hostname)</h1></body></html>" > /usr/share/nginx/html/index.html;
+              echo "<html><body><h1>DaemonSet on node: $(hostname)</h1></body></html>" > /usr/share/nginx/html/index.html;
               nginx -g 'daemon off;'
           ports:
             - containerPort: 80
