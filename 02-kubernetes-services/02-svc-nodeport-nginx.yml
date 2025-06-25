@@ -1,4 +1,5 @@
 ## deployment is in 03-svc-clusterip.yml
+## to expose minikube to this svc: minikube service svc-nodeport-nginx --url
 apiVersion: v1
 kind: Service
 metadata:
