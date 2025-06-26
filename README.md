@@ -352,7 +352,16 @@ gcloud cocmpute networks subnets delete k8s-subnet \
 ```bash
 gcloud compute networks delete k8s-vpc --quiet
 ```
+## Step 6: To create gke-cluster
 
-
+gcloud container clusters create my-gke-cluster \
+  --zone=us-central1-a \
+  --num-nodes=3 \
+  --machine-type=e2-medium \
+  --disk-size=50 \
+  --disk-type=pd-standard \
+  --enable-ip-alias \
+  --release-channel=regular \
+  --scopes=https://www.googleapis.com/auth/cloud-platform
 
 
