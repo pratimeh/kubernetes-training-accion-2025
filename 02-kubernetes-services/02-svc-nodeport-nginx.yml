@@ -33,3 +33,15 @@ spec:
       nodePort: 31111 # Node Port
   selector:
     app: nginx
+
+# Gcloud firewall rule to open specific port
+
+# gcloud compute firewall-rules create allow-nodeport-31111 \
+#   --direction=INGRESS \
+#   --priority=1000 \
+#   --network=default \
+#   --action=ALLOW \
+#   --rules=tcp:31111 \
+#   --source-ranges=0.0.0.0/0 \
+#   --target-tags=gke-cluster-1-9716ebeb-node
+
