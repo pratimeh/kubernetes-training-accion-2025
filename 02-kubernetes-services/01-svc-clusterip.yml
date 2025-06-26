@@ -32,3 +32,17 @@ spec:
       port: 80
       targetPort: 80
   type: ClusterIP
+  
+# To verify if the nginx-clusterip service can be accessed inside the cluster, you can follow one of the methods below:
+# Option 1: Use a temporary Pod for testing:
+
+# kubectl run curl-pod --rm -i -t --image=busybox:1.28 -- /bin/sh
+# Inside the pod, try to access the service by name:
+
+# wget -qO- http://nginx-clusterip
+
+# Option 2: Use an ephemeral pod with more tools (like curl and DNS)
+
+# kubectl run curl --rm -i -t --image=curlimages/curl -- sh
+# Then run:
+# curl http://nginx-clusterip
